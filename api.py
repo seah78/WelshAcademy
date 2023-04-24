@@ -29,9 +29,9 @@ def get_all_users():
     for user in users:
         user_data = {}
         user_data['public_id'] = user.public_id
-        user_data['name'] = user.name
+        user_data['username'] = user.username
         user_data['password'] = user.password
-        user_data['admin'] = user.admin
+        user_data['is_admin'] = user.is_admin
         output.append(user_data)
 
     return jsonify({'users' : output})
@@ -48,7 +48,7 @@ def create_user():
     
     hashed_password = generate_password_hash(data['password'], method='sha256')
     
-    new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password, admin=False)
+    new_user = User(public_id=str(uuid.uuid4()), name=data['username'], password=hashed_password, is_admin=False)
     db.session.add(new_user)
     db.session.commit()
     
