@@ -75,6 +75,7 @@ def update_user(public_id):
         return jsonify({'message' : 'user not found'})
 
     user.is_admin = True
+    db.session.commit()
 
     return jsonify({'message' : 'The user has been promoted!'})
 
