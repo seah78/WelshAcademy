@@ -4,14 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
-flask-sqlalchemy = "*"
-flask_jwt_extended = "*"
-flask-marshmallow = "*"
-marshmallow-sqlalchemy = "*"
-datetime = "*"
-uuid = "*"
-pyjwt = "*"
+Flask-RESTful = "*"
+Flask-SQLAlchemy = "*"
+PyJWT = "1.7.1"
 
 [dev-packages]
 
