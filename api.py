@@ -51,7 +51,7 @@ def home():
 @token_required
 def get_all_users(current_user):
     
-    if not current_user.admin:
+    if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
     
     users = User.query.all()
