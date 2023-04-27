@@ -6,7 +6,7 @@ import jwt
 from functools import wraps
 
 from config import Config
-from models import db, User, Ingredient, init_app, ingredient_schema, ingredients_schema
+from models import db, User, Ingredient, Recipe, RecipeIngredient, FavoriteRecipe, init_app, ingredient_schema, ingredients_schema, recipe_ingredient_schema, recipe_ingredients_schema, recipe_schema, recipes_schema, favorite_recipe_schema, favorites_recipes_schema
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -233,5 +233,74 @@ def delete_ingredient(current_user, ingredient_id):
     
     ingredient = Ingredient.query.get_or_404(ingredient_id)
     db.session.delete(ingredient)
+    db.session.commit()
+    return '', 204
+
+
+
+# Recipe endpoints
+
+# New recipe
+@app.route('/recipe', methods=['POST'])
+@token_required
+def add_recipe(current_user):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    name = request.json['name']
+    description = request.json.get('description', None)
+    new_recipe = Recipe(name=name, description=description)
+    db.session.add(new_recipe)
+    
+    for ingredient in request.json.get('ingredients', []):
+        ingredient_id = ingredient['id']
+        quantity = ingredient['quantity']
+        recipe_ingredient = RecipeIngredient(recipe=new_recipe, ingredient_id=ingredient_id, quantity=quantity)
+        db.session.add(recipe_ingredient)
+
+    db.session.commit()
+    return recipe_schema.jsonify(new_recipe)
+
+# Show all recipes
+@app.route('/recipe', methods=['GET'])
+@token_required
+def get_all_recipes(current_user):
+    all_recipes = Recipe.query.all()
+    result = recipes_schema.dump(all_recipes)
+    return jsonify(result)
+
+# Show recipe by id
+@app.route('/recipe/int:recipe_id', methods=['GET'])
+@token_required
+def get_recipe(current_user, recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    return recipe_schema.jsonify(recipe)
+
+# Update recipe by id
+@app.route('/recipe/int:recipe_id', methods=['PUT'])
+@token_required
+def update_recipe(current_user, recipe_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    recipe = Recipe.query.get_or_404(recipe_id)
+    recipe.name = request.json['name']
+    recipe.description = request.json.get('description', None)
+    recipe.ingredients = []
+    for ingredient in request.json.get('ingredients', []):
+        ingredient_id = ingredient['id']
+        quantity = ingredient['quantity']
+        recipe_ingredient = RecipeIngredient(recipe=recipe, ingredient_id=ingredient_id, quantity=quantity)
+        db.session.add(recipe_ingredient)
+
+    db.session.commit()
+    return recipe_schema.jsonify(recipe)
+
+# Delete recipe by id
+@app.route('/recipe/int:recipe_id', methods=['DELETE'])
+@token_required
+def delete_recipe(current_user, recipe_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    recipe = Recipe.query.get_or_404(recipe_id)
+    db.session.delete(recipe)
     db.session.commit()
     return '', 204
