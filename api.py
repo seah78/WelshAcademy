@@ -197,7 +197,7 @@ def add_ingredient(current_user):
 # Show all indregients
 @app.route('/ingredient', methods=['GET'])
 @token_required
-def get_all_ingredients():
+def get_all_ingredients(current_user):
     all_ingredients = Ingredient.query.all()
     
     
@@ -205,14 +205,14 @@ def get_all_ingredients():
     return jsonify(result)
 
 # Show ingredient by id
-@app.route('/ingredient/int:ingredient_id', methods=['GET'])
+@app.route('/ingredient/<ingredient_id>', methods=['GET'])
 @token_required
-def get_ingredient(ingredient_id):
+def get_ingredient(current_user, ingredient_id):
     ingredient = Ingredient.query.get_or_404(ingredient_id)
     return ingredient_schema.jsonify(ingredient)
 
 # Update ingredient by id
-@app.route('/ingredient/int:ingredient_id', methods=['PUT'])
+@app.route('/ingredient/<ingredient_id>', methods=['PUT'])
 @token_required
 def update_ingredient(current_user, ingredient_id):
     if not current_user.is_admin:
@@ -225,7 +225,7 @@ def update_ingredient(current_user, ingredient_id):
     return ingredient_schema.jsonify(ingredient)
 
 # Delete ingredient by id
-@app.route('/ingredient/int:ingredient_id', methods=['DELETE'])
+@app.route('/ingredient/<ingredient_id>', methods=['DELETE'])
 @token_required
 def delete_ingredient(current_user, ingredient_id):
     if not current_user.is_admin:
