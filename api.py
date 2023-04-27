@@ -49,8 +49,6 @@ def home():
 # Create admin user
 @app.route('/admin', methods=['POST'])
 def create_admin_user():
-
-    data = request.get_json()
     
     hashed_password = generate_password_hash("SuperPassword", method='sha256')
     
