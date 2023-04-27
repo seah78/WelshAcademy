@@ -6,7 +6,7 @@ import jwt
 from functools import wraps
 
 from config import Config
-from models import db, User, Ingredient, init_app
+from models import db, User, Ingredient, init_app, ingredient_schema, ingredients_schema
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -58,6 +58,8 @@ def create_admin_user():
     
     return jsonify({'message' : 'SuperAdmin created'})
 
+# Updtae password user
+
 # Show all users
 @app.route('/user', methods=['GET'])
 @token_required
@@ -85,6 +87,9 @@ def get_all_users(current_user):
 @token_required
 def get_one_user(current_user, public_id):
     
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
     user = User.query.filter_by(public_id=public_id).first()
     
     if not user:
@@ -102,6 +107,10 @@ def get_one_user(current_user, public_id):
 @app.route('/user', methods=['POST'])
 @token_required
 def create_user(current_user):
+    
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
     data = request.get_json()
     
     hashed_password = generate_password_hash(data['password'], method='sha256')
@@ -116,6 +125,10 @@ def create_user(current_user):
 @app.route('/user/<public_id>', methods=['PUT'])
 @token_required
 def update_user(current_user, public_id):
+    
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
     user = User.query.filter_by(public_id=public_id).first()
     
     if not user:
@@ -130,6 +143,10 @@ def update_user(current_user, public_id):
 @app.route('/user/<public_id>', methods=['DELETE'])
 @token_required
 def delete_user(current_user, public_id):
+    
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
     user = User.query.filter_by(public_id=public_id).first()
 
     if not user:
@@ -159,3 +176,26 @@ def login():
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+# Ingredient Endpoints
+
+# New ingredient
+@app.route('/ingredient', methods=['POST'])
+@token_required
+def add_ingredient(current_user):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
+    name = request.json['name']
+    description = request.json.get('description', None)
+    new_ingredient = Ingredient(name=name, description=description)
+    db.session.add(new_ingredient)
+    db.session.commit()
+    return ingredient_schema.jsonify(new_ingredient)
+
+
+
+
+
+
+
