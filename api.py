@@ -194,8 +194,44 @@ def add_ingredient(current_user):
     return ingredient_schema.jsonify(new_ingredient)
 
 
+# Show all indregients
+@app.route('/ingredient', methods=['GET'])
+@token_required
+def get_all_ingredients():
+    all_ingredients = Ingredient.query.all()
+    
+    
+    result = ingredients_schema.dump(all_ingredients)
+    return jsonify(result)
 
+# Show ingredient by id
+@app.route('/ingredient/int:ingredient_id', methods=['GET'])
+@token_required
+def get_ingredient(ingredient_id):
+    ingredient = Ingredient.query.get_or_404(ingredient_id)
+    return ingredient_schema.jsonify(ingredient)
 
+# Update ingredient by id
+@app.route('/ingredient/int:ingredient_id', methods=['PUT'])
+@token_required
+def update_ingredient(current_user, ingredient_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
+    ingredient = Ingredient.query.get_or_404(ingredient_id)
+    ingredient.name = request.json['name']
+    ingredient.description = request.json.get('description', None)
+    db.session.commit()
+    return ingredient_schema.jsonify(ingredient)
 
-
-
+# Delete ingredient by id
+@app.route('/ingredient/int:ingredient_id', methods=['DELETE'])
+@token_required
+def delete_ingredient(current_user, ingredient_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    
+    ingredient = Ingredient.query.get_or_404(ingredient_id)
+    db.session.delete(ingredient)
+    db.session.commit()
+    return '', 204
