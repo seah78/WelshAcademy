@@ -46,6 +46,20 @@ def home():
 
 # User endpoints
 
+# Create admin user
+@app.route('/admin', methods=['POST'])
+def create_admin_user():
+
+    data = request.get_json()
+    
+    hashed_password = generate_password_hash("SuperPassword", method='sha256')
+    
+    new_user = User(public_id=str(uuid.uuid4()), username="SuperAdmin", password=hashed_password, is_admin=True)
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return jsonify({'message' : 'SuperAdmin created'})
+
 # Show all users
 @app.route('/user', methods=['GET'])
 @token_required
