@@ -64,6 +64,34 @@ def create_admin_user():
 
 # Updtae password user
 
+@app.route('/admin', methods=['PUT'])
+@token_required
+def update_admin_password(current_user):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})    
+    
+    # Retrieve the SuperAdmin user
+    superadmin_user = User.query.filter_by(username="SuperAdmin").first()
+
+    # Check if SuperAdmin user exists
+    if superadmin_user is None:
+        return jsonify({'message' : 'SuperAdmin does not exist'}), 404
+
+    # Get the new password from the request body
+    new_password = request.json.get('new_password')
+
+    # Check if new_password is provided
+    if not new_password:
+        return jsonify({'message' : 'New password is missing'}), 400
+
+    # Generate new hashed password and update it in the database
+    hashed_password = generate_password_hash(new_password, method='sha256')
+    superadmin_user.password = hashed_password
+    db.session.commit()
+
+    return jsonify({'message' : 'SuperAdmin password updated'})
+
+
 # Show all users
 @app.route('/user', methods=['GET'])
 @token_required
