@@ -384,7 +384,7 @@ def update_recipe_ingredient(current_user, recipe_ingredient_id):
     db.session.commit()
     return recipe_ingredient_schema.jsonify(recipe_ingredient)
 
-# Delete recipe by id
+# Delete ingredien in recipe by id
 @app.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['DELETE'])
 @token_required
 def delete_recipe_ingredient(current_user, recipe_ingredient_id):
@@ -417,11 +417,12 @@ def get_all_favorite_recipe(current_user):
     result = favorites_recipes_schema.dump(all_favorite_recipe)
     return jsonify(result)
     
-# Show one favorite recipe
+# Show favorite recipe for current user
 @app.route('/favorite_recipe', methods=['GET'])
 @token_required
 def get_favorite_recipe(current_user, favorite_recipe_id):
-    favorite_recipe = FavoriteRecipe.query.get_or_404(favorite_recipe_id)
+    user_id = current_user.id
+    favorite_recipe = FavoriteRecipe.query.get_or_404(user_id)
     return favorite_recipe_schema.jsonify(favorite_recipe)
 
 # Delete favorite recipe
