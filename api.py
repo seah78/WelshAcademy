@@ -420,7 +420,7 @@ def get_all_favorite_recipe(current_user):
 # Show favorite recipe for current user
 @app.route('/favorite_recipe', methods=['GET'])
 @token_required
-def get_favorite_recipe(current_user, favorite_recipe_id):
+def get_favorite_recipe(current_user):
     user_id = current_user.id
     favorite_recipe = FavoriteRecipe.query.get_or_404(user_id)
     return favorite_recipe_schema.jsonify(favorite_recipe)
