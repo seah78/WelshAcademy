@@ -357,7 +357,7 @@ def add_recipe_ingredient(current_user):
     return recipe_schema.jsonify(new_recipe_ingredient)
 
 # Show all ingredient in recipe
-@app.route('/recipe', methods=['GET'])
+@app.route('/recipe_ingredient', methods=['GET'])
 @token_required
 def get_all_recipes_ingredient(current_user):
     all_recipe_ingredients = RecipeIngredient.query.all()
@@ -365,14 +365,14 @@ def get_all_recipes_ingredient(current_user):
     return jsonify(result)
 
 # Show ingredient in recipe by id
-@app.route('/recipe/<recipe_ingredient_id>', methods=['GET'])
+@app.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['GET'])
 @token_required
 def get_recipe_ingredient(current_user, recipe_ingredient_id):
     recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
     return recipe_ingredient_schema.jsonify(recipe_ingredient)
 
 # Update ingredient in recipe by id
-@app.route('/recipe/<recipe_ingredient_id>', methods=['PUT'])
+@app.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['PUT'])
 @token_required
 def update_recipe_ingredient(current_user, recipe_ingredient_id):
     if not current_user.is_admin:
@@ -385,7 +385,7 @@ def update_recipe_ingredient(current_user, recipe_ingredient_id):
     return recipe_ingredient_schema.jsonify(recipe_ingredient)
 
 # Delete recipe by id
-@app.route('/recipe/<recipe_ingredient_id>', methods=['DELETE'])
+@app.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['DELETE'])
 @token_required
 def delete_recipe_ingredient(current_user, recipe_ingredient_id):
     if not current_user.is_admin:
