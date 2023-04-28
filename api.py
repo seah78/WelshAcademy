@@ -304,3 +304,105 @@ def delete_recipe(current_user, recipe_id):
     db.session.delete(recipe)
     db.session.commit()
     return '', 204
+
+
+# Ingredients Recipe endpoints
+
+# New ingredient in recipe
+@app.route('/recipe_ingredient', methods=['POST'])
+@token_required
+def add_recipe_ingredient(current_user):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+
+    recipe_id = request.json['recipe_id']
+    ingredient_id = request.json['ingredient_id']
+    quantity = request.json['quantity']
+    new_recipe_ingredient = RecipeIngredient(recipe_id=recipe_id, ingredient_id=ingredient_id, quantity=quantity)
+    
+    db.session.add(new_recipe_ingredient)
+    db.session.commit()
+    return recipe_schema.jsonify(new_recipe_ingredient)
+
+# Show all ingredient in recipe
+@app.route('/recipe', methods=['GET'])
+@token_required
+def get_all_recipes_ingredient(current_user):
+    all_recipe_ingredients = RecipeIngredient.query.all()
+    result = recipe_ingredients_schema.dump(all_recipe_ingredients)
+    return jsonify(result)
+
+# Show ingredient in recipe by id
+@app.route('/recipe/<recipe_ingredient_id>', methods=['GET'])
+@token_required
+def get_recipe_ingredient(current_user, recipe_ingredient_id):
+    recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
+    return recipe_ingredient_schema.jsonify(recipe_ingredient)
+
+# Update ingredient in recipe by id
+@app.route('/recipe/<recipe_ingredient_id>', methods=['PUT'])
+@token_required
+def update_recipe_ingredient(current_user, recipe_ingredient_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
+    recipe_ingredient.recipe_id = request.json['recipe_id']
+    recipe_ingredient.ingredient_id = request.json['ingredient_id']
+    recipe_ingredient.quantity = request.json['quantity']
+    db.session.commit()
+    return recipe_ingredient_schema.jsonify(recipe_ingredient)
+
+# Delete recipe by id
+@app.route('/recipe/<recipe_ingredient_id>', methods=['DELETE'])
+@token_required
+def delete_recipe_ingredient(current_user, recipe_ingredient_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
+    db.session.delete(recipe_ingredient)
+    db.session.commit()
+    return '', 204
+
+
+# Favorite recipes endpoints
+
+# New favorite recipe
+@app.route('/favorite_recipe', methods=['POST'])
+@token_required
+def add_favorite_recipe(current_user):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+
+    user_id = request.json['user_id']
+    recipe_id = request.json.get('recipe_id')
+    new_favorite_recipe = FavoriteRecipe(user_id=user_id, recipe_id=recipe_id)
+    db.session.add(new_favorite_recipe)
+    db.session.commit()
+    return favorite_recipe_schema.jsonify(new_favorite_recipe)
+
+# Show all favorite recipe
+@app.route('/favorite_recipe', methods=['GET'])
+@token_required
+def get_all_favorite_recipe(current_user):
+    all_favorite_recipe = FavoriteRecipe.query.all()
+    result = favorites_recipes_schema.dump(all_favorite_recipe)
+    return jsonify(result)
+    
+# Show one favorite recipe
+@app.route('/favorite_recipe', methods=['GET'])
+@token_required
+def get_favorite_recipe(current_user, favorite_recipe_id):
+    favorite_recipe = FavoriteRecipe.query.get_or_404(favorite_recipe_id)
+    return favorite_recipe_schema.jsonify(favorite_recipe)
+
+# Delete favorite recipe
+@app.route('/favorite_recipe', methods=['DELETE'])
+@token_required
+def delete_favorite_recipe(current_user, favorite_recipe_id):
+    if not current_user.is_admin:
+        return jsonify({'message' : 'Cannot perform that function!'})
+    favorite_recipe = FavoriteRecipe.query.get_or_404(favorite_recipe_id)
+    db.session.delete(favorite_recipe)
+    db.session.commit()
+    return '', 204
+
