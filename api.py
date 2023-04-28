@@ -370,10 +370,7 @@ def delete_recipe_ingredient(current_user, recipe_ingredient_id):
 @app.route('/favorite_recipe', methods=['POST'])
 @token_required
 def add_favorite_recipe(current_user):
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    user_id = request.json['user_id']
+    user_id = current_user.id
     recipe_id = request.json.get('recipe_id')
     new_favorite_recipe = FavoriteRecipe(user_id=user_id, recipe_id=recipe_id)
     db.session.add(new_favorite_recipe)
@@ -399,9 +396,9 @@ def get_favorite_recipe(current_user, favorite_recipe_id):
 @app.route('/favorite_recipe', methods=['DELETE'])
 @token_required
 def delete_favorite_recipe(current_user, favorite_recipe_id):
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
     favorite_recipe = FavoriteRecipe.query.get_or_404(favorite_recipe_id)
+    if favorite_recipe.user_id is not current_user.id:
+        return jsonify({'message' : 'Cannot perform that function!'})
     db.session.delete(favorite_recipe)
     db.session.commit()
     return '', 204
