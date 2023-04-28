@@ -269,14 +269,14 @@ def get_all_recipes(current_user):
     return jsonify(result)
 
 # Show recipe by id
-@app.route('/recipe/int:recipe_id', methods=['GET'])
+@app.route('/recipe/<recipe_id>', methods=['GET'])
 @token_required
 def get_recipe(current_user, recipe_id):
     recipe = Recipe.query.get_or_404(recipe_id)
     return recipe_schema.jsonify(recipe)
 
 # Update recipe by id
-@app.route('/recipe/int:recipe_id', methods=['PUT'])
+@app.route('/recipe/<recipe_id>', methods=['PUT'])
 @token_required
 def update_recipe(current_user, recipe_id):
     if not current_user.is_admin:
@@ -295,7 +295,7 @@ def update_recipe(current_user, recipe_id):
     return recipe_schema.jsonify(recipe)
 
 # Delete recipe by id
-@app.route('/recipe/int:recipe_id', methods=['DELETE'])
+@app.route('/recipe/<recipe_id>', methods=['DELETE'])
 @token_required
 def delete_recipe(current_user, recipe_id):
     if not current_user.is_admin:
