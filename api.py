@@ -50,6 +50,10 @@ def home():
 @app.route('/admin', methods=['POST'])
 def create_admin_user():
     
+    # Check if SuperAdmin already exists
+    if User.query.filter_by(username="SuperAdmin").first() is not None:
+        return jsonify({'message' : 'SuperAdmin already exists'}), 409
+    
     hashed_password = generate_password_hash("SuperPassword", method='sha256')
     
     new_user = User(public_id=str(uuid.uuid4()), username="SuperAdmin", password=hashed_password, is_admin=True)
