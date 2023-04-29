@@ -178,11 +178,14 @@ def delete_user(current_user, public_id):
     
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
-    
+
     user = User.query.filter_by(public_id=public_id).first()
 
     if not user:
         return jsonify({'message' : 'No user found!'})
+
+    if user.is_admin and user.username == 'SuperAdmin':
+        return jsonify({'message' : 'Cannot delete SuperAdmin!'})
 
     db.session.delete(user)
     db.session.commit()
