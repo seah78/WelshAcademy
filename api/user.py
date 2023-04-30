@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from WelshAcademy.main import token_required
+from utils.decorator import token_required
 from flask import request, jsonify, make_response, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import db, User

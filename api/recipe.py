@@ -1,4 +1,4 @@
-from WelshAcademy.main import token_required
+from utils.decorator import token_required
 from flask import request, jsonify, Blueprint
 from models.recipe import db, Recipe, recipe_schema, recipes_schema
 from models.recipe_ingredient import RecipeIngredient

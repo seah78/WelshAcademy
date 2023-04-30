@@ -1,10 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+from utils.extensions import db, ma
 
-db = SQLAlchemy()
-ma = Marshmallow()
-
-# FavoriteRecipe Model
 class FavoriteRecipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -13,7 +8,7 @@ class FavoriteRecipe(db.Model):
     def __init__(self, user_id, recipe_id):
         self.user_id = user_id
         self.recipe_id = recipe_id
-        
+
 class FavoriteRecipeSchema(ma.Schema):
     class Meta:
         fields = ('id', 'user_id', 'recipe_id')

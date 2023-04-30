@@ -1,6 +1,7 @@
-from WelshAcademy.main import token_required
+from utils.decorator import token_required
 from flask import request, jsonify, Blueprint
-from models.recipe_ingredient import db, RecipeIngredient, recipe_schema, recipe_ingredient_schema, recipe_ingredients_schema 
+from models.recipe_ingredient import db, RecipeIngredient, recipe_ingredient_schema, recipe_ingredients_schema
+from models.recipe import recipe_schema 
 
 recipe_ingredient_api = Blueprint('recipe_ingredient_api', __name__)
 
