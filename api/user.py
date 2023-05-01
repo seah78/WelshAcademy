@@ -103,9 +103,6 @@ def get_one_user(current_user, public_id):
 @user_api.route('/signup', methods=['POST'])
 def signup():
     
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-    
     data = request.get_json()
     
     hashed_password = generate_password_hash(data['password'], method='sha256')
