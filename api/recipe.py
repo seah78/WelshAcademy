@@ -60,14 +60,3 @@ def update_recipe(current_user, recipe_id):
 
     db.session.commit()
     return recipe_schema.jsonify(recipe)
-
-# Delete recipe by id
-@recipe_api.route('/recipe/<recipe_id>', methods=['DELETE'])
-@token_required
-def delete_recipe(current_user, recipe_id):
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-    recipe = Recipe.query.get_or_404(recipe_id)
-    db.session.delete(recipe)
-    db.session.commit()
-    return '', 204

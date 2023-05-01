@@ -50,15 +50,3 @@ def update_ingredient(current_user, ingredient_id):
     ingredient.description = request.json.get('description', None)
     db.session.commit()
     return ingredient_schema.jsonify(ingredient)
-
-# Delete ingredient by id
-@ingredient_api.route('/ingredient/<ingredient_id>', methods=['DELETE'])
-@token_required
-def delete_ingredient(current_user, ingredient_id):
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-    
-    ingredient = Ingredient.query.get_or_404(ingredient_id)
-    db.session.delete(ingredient)
-    db.session.commit()
-    return '', 204
