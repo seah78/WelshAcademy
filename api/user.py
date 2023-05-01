@@ -101,7 +101,7 @@ def get_one_user(current_user, public_id):
 
 # Create user signup
 @user_api.route('/signup', methods=['POST'])
-def signup(current_user):
+def signup():
     
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
