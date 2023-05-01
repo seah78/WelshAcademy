@@ -2,7 +2,7 @@ import datetime
 import uuid
 import jwt
 from utils.decorator import token_required
-from flask import request, jsonify, make_response, Blueprint
+from flask import request, jsonify, make_response, Blueprint, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import db, User
 
@@ -167,7 +167,7 @@ def login():
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id' : user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'public_id' : user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, current_app.config['SECRET_KEY'])
 
         return jsonify({'token' : token.decode('UTF-8')})
 
