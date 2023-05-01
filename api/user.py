@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import jwt
 from utils.decorator import token_required
 from flask import request, jsonify, make_response, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
