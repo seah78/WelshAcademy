@@ -3,6 +3,7 @@ import uuid
 import jwt
 from utils.decorator import token_required
 from flask import request, jsonify, make_response, Blueprint, current_app
+from sqlalchemy import exists
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import db, User
 
@@ -103,16 +104,21 @@ def get_one_user(current_user, public_id):
 # Create user signup
 @user_api.route('/signup', methods=['POST'])
 def signup():
-    
+
     data = request.get_json()
-    
+
+    user_exists = db.session.query(exists().where(User.username == data['username'])).scalar()
+
+    if user_exists:
+        return jsonify({'message': 'User already exists'}), 409
+
     hashed_password = generate_password_hash(data['password'], method='sha256')
-    
+
     new_user = User(public_id=str(uuid.uuid4()), username=data['username'], password=hashed_password, is_admin=False)
     db.session.add(new_user)
     db.session.commit()
-    
-    return jsonify({'message' : 'New user created'})
+
+    return jsonify({'message': 'New user created'})
 
 # Update user
 @user_api.route('/user/<public_id>', methods=['PUT'])
