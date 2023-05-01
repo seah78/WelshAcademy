@@ -39,12 +39,14 @@ def get_all_recipes(current_user):
         result.append(recipe_data)
     return jsonify(result), 200
 
-# Show recipe by id
+# Show recipe by id with its ingredients
 @recipe_api.route('/recipe/<recipe_id>', methods=['GET'])
 @token_required
 def get_recipe(current_user, recipe_id):
     recipe = Recipe.query.get_or_404(recipe_id)
-    return recipe_schema.jsonify(recipe)
+    recipe_data = recipe_schema.dump(recipe)
+    recipe_data['ingredients'] = [recipe_ingredient_schema.dump(ingredient) for ingredient in recipe.ingredients]
+    return jsonify(recipe_data), 200
 
 # Update recipe by id
 @recipe_api.route('/recipe/<recipe_id>', methods=['PUT'])
