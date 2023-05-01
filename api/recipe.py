@@ -1,7 +1,7 @@
 from utils.decorator import token_required
 from flask import request, jsonify, Blueprint
 from models.recipe import db, Recipe, recipe_schema, recipes_schema
-from models.recipe_ingredient import RecipeIngredient
+from models.recipe_ingredient import RecipeIngredient, recipe_ingredient_schema
 
 recipe_api = Blueprint('recipe_api', __name__)
 
@@ -32,7 +32,11 @@ def add_recipe(current_user):
 @token_required
 def get_all_recipes(current_user):
     all_recipes = Recipe.query.all()
-    result = recipes_schema.dump(all_recipes)
+    result = []
+    for recipe in all_recipes:
+        recipe_data = recipe_schema.dump(recipe)
+        recipe_data['ingredients'] = [recipe_ingredient_schema.dump(ingredient) for ingredient in recipe.ingredients]
+        result.append(recipe_data)
     return jsonify(result), 200
 
 # Show recipe by id
