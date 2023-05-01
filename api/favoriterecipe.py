@@ -30,8 +30,10 @@ def get_all_favorite_recipe(current_user):
 @token_required
 def get_favorite_recipe(current_user):
     user_id = current_user.id
-    favorite_recipe = FavoriteRecipe.query.get_or_404(user_id)
-    return favorite_recipe_schema.jsonify(favorite_recipe)
+    favorite_recipes = FavoriteRecipe.query.filter_by(user_id=user_id).all()
+    result = favorites_recipes_schema.dump(favorite_recipes)
+    return jsonify(result)
+
 
 # Delete favorite recipe
 @favorite_recipe_api.route('/favorite_recipe', methods=['DELETE'])
