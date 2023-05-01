@@ -26,7 +26,7 @@ def create_admin_user():
     
     return jsonify({'message' : 'SuperAdmin created'})
 
-# Updtae password user
+# Updtae admin password user
 
 @user_api.route('/admin', methods=['PUT'])
 @token_required
@@ -99,10 +99,9 @@ def get_one_user(current_user, public_id):
     
     return jsonify({'user' : user_data})
 
-# Create user
-@user_api.route('/user', methods=['POST'])
-@token_required
-def create_user(current_user):
+# Create user signup
+@user_api.route('/signup', methods=['POST'])
+def signup(current_user):
     
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
