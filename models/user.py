@@ -8,9 +8,7 @@ class User(db.Model):
     password = db.Column(db.String(80), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
 
-    
-def init_app(app):
-    db.init_app(app)
-    ma.init_app(app)
-    with app.app_context():
-        db.create_all()
+    @classmethod
+    def init_app(cls, app):
+        with app.app_context():
+            db.create_all()

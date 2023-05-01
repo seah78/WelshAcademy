@@ -11,16 +11,14 @@ class Recipe(db.Model):
         self.name = name
         self.description = description
 
+    @classmethod
+    def init_app(cls, app):
+        with app.app_context():
+            db.create_all()
+
 class RecipeSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'description', 'ingredients')
 
 recipe_schema = RecipeSchema()
 recipes_schema = RecipeSchema(many=True)
-
-
-def init_app(app):
-    db.init_app(app)
-    ma.init_app(app)
-    with app.app_context():
-        db.create_all()

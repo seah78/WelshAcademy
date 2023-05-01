@@ -9,6 +9,11 @@ class FavoriteRecipe(db.Model):
         self.user_id = user_id
         self.recipe_id = recipe_id
 
+    @classmethod
+    def init_app(cls, app):
+        with app.app_context():
+            db.create_all()
+
 class FavoriteRecipeSchema(ma.Schema):
     class Meta:
         fields = ('id', 'user_id', 'recipe_id')
@@ -17,10 +22,6 @@ favorite_recipe_schema = FavoriteRecipeSchema()
 favorites_recipes_schema = FavoriteRecipeSchema(many=True)
 
 
-def init_app(app):
-    db.init_app(app)
-    ma.init_app(app)
-    with app.app_context():
-        db.create_all()
+
 
 

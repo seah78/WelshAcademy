@@ -12,6 +12,11 @@ class RecipeIngredient(db.Model):
         self.ingredient_id = ingredient_id
         self.quantity = quantity
 
+    @classmethod
+    def init_app(cls, app):
+        with app.app_context():
+            db.create_all()
+
 class RecipeIngredientSchema(ma.Schema):
     class Meta:
         fields = ('id', 'recipe_id', 'ingredient_id', 'quantity')
@@ -19,9 +24,3 @@ class RecipeIngredientSchema(ma.Schema):
 recipe_ingredient_schema = RecipeIngredientSchema()
 recipe_ingredients_schema = RecipeIngredientSchema(many=True)
 
-
-def init_app(app):
-    db.init_app(app)
-    ma.init_app(app)
-    with app.app_context():
-        db.create_all()

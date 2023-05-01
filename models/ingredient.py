@@ -6,6 +6,11 @@ class Ingredient(db.Model):
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(200))
 
+    @classmethod
+    def init_app(cls, app):
+        with app.app_context():
+            db.create_all()
+            
 class IngredientSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'description')
@@ -13,9 +18,3 @@ class IngredientSchema(ma.Schema):
 ingredient_schema = IngredientSchema()
 ingredients_schema = IngredientSchema(many=True)
 
-
-def init_app(app):
-    db.init_app(app)
-    ma.init_app(app)
-    with app.app_context():
-        db.create_all()

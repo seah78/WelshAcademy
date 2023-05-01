@@ -11,6 +11,8 @@ from models.ingredient import Ingredient
 from models.recipe import Recipe
 from models.recipe_ingredient import RecipeIngredient
 from models.favorite_recipe import FavoriteRecipe
+from utils.extensions import db, ma
+
 
 app = Flask(__name__)
 app.register_blueprint(user_api)
@@ -18,8 +20,6 @@ app.register_blueprint(ingredient_api)
 app.register_blueprint(recipe_api)
 app.register_blueprint(recipe_ingredient_api)
 app.register_blueprint(favorite_recipe_api)
-
-app.config.from_object(Config)
 
 def init_app(app):
     from utils.extensions import db, ma
@@ -31,6 +31,10 @@ def init_app(app):
         Recipe.init_app(app)
         RecipeIngredient.init_app(app)
         FavoriteRecipe.init_app(app)
+        db.create_all()
+
+app.config.from_object(Config)
+init_app(app)
 
 # ENDPONTS
 
