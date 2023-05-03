@@ -9,6 +9,12 @@ from models.user import db, User
 
 user_api = Blueprint('user_api', __name__)
 
+# ENDPONTS
+
+# home
+@user_api.route('/', methods=['GET'])
+def home():
+    return "<h1>Welsh Academy</h1><p>Welsh Academy's API site.</p>"
 
 # User endpoints
 

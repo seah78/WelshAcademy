@@ -11,7 +11,6 @@ from models.ingredient import Ingredient
 from models.recipe import Recipe
 from models.recipe_ingredient import RecipeIngredient
 from models.favorite_recipe import FavoriteRecipe
-from utils.extensions import db, ma
 
 
 app = Flask(__name__)
@@ -36,9 +35,3 @@ def init_app(app):
 app.config.from_object(Config)
 init_app(app)
 
-# ENDPONTS
-
-# home
-@app.route('/', methods=['GET'])
-def home():
-    return "<h1>Welsh Academy</h1><p>Welsh Academy's API site.</p>"
