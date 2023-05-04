@@ -31,6 +31,13 @@ La documentation de l'API est accessible à cette adresse : https://documenter.g
 
 Depuis un navigateur ou depuis Postman saisissez l'adresse http://127.0.0.1:5000/
 
+## Docker
+
+Pour construire l'image Docker, utilisez la commande suivante :
+docker buid -t welshacademy .
+
+Pour lancer le conteneur, utilisez la commande suivante :
+docker run -d -p 5000:5000 welshacademy
 
 ## Fabriqué avec
 
