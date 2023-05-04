@@ -1,6 +1,6 @@
 from unittest import mock
 from unittest.mock import patch
-from tests.conftest import app, client
+from conftest import app, client
 import json
 import jwt
 from flask import current_app

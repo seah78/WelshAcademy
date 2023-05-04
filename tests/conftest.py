@@ -2,9 +2,6 @@ import pytest
 from unittest import mock
 from flask import Flask
 
-from app import *
-
-
 @pytest.fixture(scope='session')
 def app():
     app = Flask('name')
