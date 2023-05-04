@@ -48,20 +48,22 @@ def db(app):
 
 
 @pytest.fixture(scope='function')
-def mock_user():
+def mock_super_admin():
     user = mock.Mock()
-    user.id = 1
-    user.username = 'mockuser'
-    user.password = '123456'
+    user.public_id = 'SuperAdmin'
+    user.username = 'SuperAdmin'
+    user.password = 'SuperPassword'
+    user.is_admin = True
     return user
 
 
 @pytest.fixture(scope='function')
-def mock_admin():
+def mock_user():
     user = mock.Mock()
-    user.id = 1
-    user.username = 'SuperAdmin'
-    user.password = 'SuperPassword'
+    user.public_id = 'mockuser1'
+    user.username = 'mockuser'
+    user.password = '123456'
+    user.is_admin = False
     return user
 
 
@@ -69,9 +71,9 @@ def mock_admin():
 def mock_recipe():
     recipe = mock.Mock()
     recipe.id = 1
-    recipe.title = 'Mock Recipe'
+    recipe.name = 'Mock Recipe'
     recipe.description = 'This is a mock recipe.'
-    recipe.user_id = 1
+    recipe.ingredients = []
     return recipe
 
 
@@ -91,7 +93,6 @@ def mock_recipe_ingredient():
     recipe_ingredient.recipe_id = 1
     recipe_ingredient.ingredient_id = 1
     recipe_ingredient.quantity = 1
-    recipe_ingredient.unit = 'unit'
     return recipe_ingredient
 
 
