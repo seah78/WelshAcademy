@@ -9,7 +9,7 @@ recipe_api = Blueprint('recipe_api', __name__)
 
 # New recipe
 @recipe_api.route('/recipe', methods=['POST'])
-@token_required
+#@token_required
 def add_recipe(current_user):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
@@ -29,7 +29,7 @@ def add_recipe(current_user):
 
 # Show all recipes
 @recipe_api.route('/recipe', methods=['GET'])
-@token_required
+#@token_required
 def get_all_recipes(current_user):
     all_recipes = Recipe.query.all()
     result = []
@@ -41,7 +41,7 @@ def get_all_recipes(current_user):
 
 # Show recipe by id with its ingredients
 @recipe_api.route('/recipe/<recipe_id>', methods=['GET'])
-@token_required
+#@token_required
 def get_recipe(current_user, recipe_id):
     recipe = Recipe.query.get_or_404(recipe_id)
     recipe_data = recipe_schema.dump(recipe)
@@ -50,7 +50,7 @@ def get_recipe(current_user, recipe_id):
 
 # Update recipe by id
 @recipe_api.route('/recipe/<recipe_id>', methods=['PUT'])
-@token_required
+#@token_required
 def update_recipe(current_user, recipe_id):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
