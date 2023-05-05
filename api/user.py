@@ -16,31 +16,6 @@ user_api = Blueprint('user_api', __name__)
 def home():
     return "<h1>Welsh Academy</h1><p>Welsh Academy's API site.</p>"
 
-# Helper functions
-def get_admin_headers():
-    admin_user = User.query.filter_by(username="SuperAdmin").first()
-    token = jwt.encode({'public_id': admin_user.public_id,
-                        'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
-                        current_app.config['SECRET_KEY'], algorithm='HS256')
-    headers = {'Authorization': 'Bearer '+ token.decode('UTF-8')}
-    return headers
-
-def get_auth_headers(username, password):
-    user = User.query.filter_by(username=username).first()
-
-    if not user:
-        return None
-
-    if check_password_hash(user.password, password):
-        token = jwt.encode({'public_id': user.public_id,
-                            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
-                            current_app.config['SECRET_KEY'], algorithm='HS256')
-        headers = {'Authorization': 'Bearer '+ token.decode('UTF-8')}
-        return headers
-
-    return None
-
-
 # User endpoints
 
 # Create admin user
