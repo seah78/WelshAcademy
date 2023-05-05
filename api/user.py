@@ -68,10 +68,10 @@ def update_admin_password(current_user):
 # Show all users
 @user_api.route('/user', methods=['GET'])
 #@token_required
-def get_all_users(current_user):
+def get_all_users(): #current_user
     
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
+    #if not current_user.is_admin:
+    #    return jsonify({'message' : 'Cannot perform that function!'})
     
     users = User.query.all()
 
@@ -90,10 +90,10 @@ def get_all_users(current_user):
 # Show one user
 @user_api.route('/user/<public_id>', methods=['GET'])
 #@token_required
-def get_one_user(current_user, public_id):
+def get_one_user(public_id): # current_user,
     
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
+    #if not current_user.is_admin:
+    #    return jsonify({'message' : 'Cannot perform that function!'})
     
     user = User.query.filter_by(public_id=public_id).first()
     

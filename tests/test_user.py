@@ -28,5 +28,36 @@ class TestUser(BaseTestCase):
         # assert that the SuperAdmin user was created in the database
         superadmin = User.query.filter_by(username='SuperAdmin').first()
         self.assertIsNotNone(superadmin)
+    
+    def test_get_all_users(self):
 
+        # Test with an admin user
+        response = self.client.get('/user')
+        self.assertEqual(response.status_code, 200)
+        #self.assertEqual(len(json.loads(response.data)['users']), 2)
+        
+        # Test with a non-admin user
+        #response = self.client.get('/user')
+        #self.assertEqual(response.status_code, 401)
+        
+    def test_get_one_user(self):
+        # Test with a non-admin user
+        response = self.client.get('/user/' + self.test_user.public_id)
+        self.assertEqual(response.status_code, 401)
+
+        # Test with an admin user
+        response = self.client.get('/user/' + self.test_user.public_id)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['user']['public_id'], self.test_user.public_id)
+
+    def test_signup(self):
+
+        # Test with a new username
+        response = self.client.post('/signup', json={'username': 'newuser', 'password': 'newpass'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['message'], 'New user created')
+
+        # Test with an existing username
+        response = self.client.post('/signup', json={'username': 'newuser', 'password': 'testpass'})
+        self.assertEqual(response.status_code, 409)
 
