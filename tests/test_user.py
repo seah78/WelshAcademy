@@ -4,6 +4,9 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import json
+import jwt
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app
 
 from tests.base_tests import BaseTestCase
 from models.user import User
@@ -25,3 +28,5 @@ class TestUser(BaseTestCase):
         # assert that the SuperAdmin user was created in the database
         superadmin = User.query.filter_by(username='SuperAdmin').first()
         self.assertIsNotNone(superadmin)
+
+
