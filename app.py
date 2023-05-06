@@ -20,8 +20,10 @@ app.register_blueprint(recipe_api)
 app.register_blueprint(recipe_ingredient_api)
 app.register_blueprint(favorite_recipe_api)
 
+
 def init_app(app):
     from utils.extensions import db, ma
+
     db.init_app(app)
     ma.init_app(app)
     with app.app_context():
@@ -32,6 +34,6 @@ def init_app(app):
         FavoriteRecipe.init_app(app)
         db.create_all()
 
+
 app.config.from_object(Config)
 init_app(app)
-
