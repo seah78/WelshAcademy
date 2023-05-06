@@ -120,7 +120,7 @@ class TestIngredient(BaseTestCase):
         self.assertEqual(response.status_code, 404)
         
     
-    def test_updae_ingredient(self):
+    def test_update_ingredient(self):
         superadmin = User(public_id='superadmin', 
                         username='SuperAdmin', 
                         password=generate_password_hash('SuperPassword'), 
