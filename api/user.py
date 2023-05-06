@@ -26,7 +26,7 @@ def create_admin_user():
     if User.query.filter_by(username="SuperAdmin").first() is not None:
         return jsonify({'message' : 'SuperAdmin already exists'}), 409
     
-    hashed_password = generate_password_hash("SuperPassword", method='sha256')
+    hashed_password = generate_password_hash("SuperPassword", method='scrypt')
     
     new_user = User(public_id=str(uuid.uuid4()), username="SuperAdmin", password=hashed_password, is_admin=True)
     db.session.add(new_user)
@@ -57,7 +57,7 @@ def update_admin_password(current_user):
         return jsonify({'message' : 'New password is missing'}), 400
 
     # Generate new hashed password and update it in the database
-    hashed_password = generate_password_hash(new_password, method='sha256')
+    hashed_password = generate_password_hash(new_password, method='scrypt')
     superadmin_user.password = hashed_password
     db.session.commit()
 
@@ -118,9 +118,12 @@ def signup():
     if user_exists:
         return jsonify({'message': 'User already exists'}), 409
 
-    hashed_password = generate_password_hash(data['password'], method='sha256')
+    hashed_password = generate_password_hash(data['password'], method='scrypt')
 
-    new_user = User(public_id=str(uuid.uuid4()), username=data['username'], password=hashed_password, is_admin=False)
+    new_user = User(public_id=str(uuid.uuid4()), 
+                    username=data['username'], 
+                    password=hashed_password, 
+                    is_admin=False)
     db.session.add(new_user)
     db.session.commit()
 
@@ -179,7 +182,9 @@ def login():
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id' : user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, current_app.config['SECRET_KEY'])
+        token = jwt.encode({'public_id' : user.public_id, 
+                            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
+                           current_app.config['SECRET_KEY'])
 
         return jsonify({'token' : token.decode('UTF-8')})
 
