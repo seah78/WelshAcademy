@@ -8,7 +8,7 @@ favorite_recipe_api = Blueprint('favorite_recipe_api', __name__)
 
 # New favorite recipe
 @favorite_recipe_api.route('/favorite_recipe', methods=['POST'])
-@token_required
+#@token_required
 def add_favorite_recipe(current_user):
     user_id = current_user.id
     recipe_id = request.json.get('recipe_id')
@@ -19,7 +19,7 @@ def add_favorite_recipe(current_user):
 
 # Show all favorite recipe
 @favorite_recipe_api.route('/favorite_recipe', methods=['GET'])
-@token_required
+#@token_required
 def get_all_favorite_recipe(current_user):
     all_favorite_recipe = FavoriteRecipe.query.all()
     result = favorites_recipes_schema.dump(all_favorite_recipe)
@@ -27,7 +27,7 @@ def get_all_favorite_recipe(current_user):
     
 # Show favorite recipe for current user
 @favorite_recipe_api.route('/favorite_recipe', methods=['GET'])
-@token_required
+#@token_required
 def get_favorite_recipe(current_user):
     user_id = current_user.id
     favorite_recipes = FavoriteRecipe.query.filter_by(user_id=user_id).all()
@@ -37,7 +37,7 @@ def get_favorite_recipe(current_user):
 
 # Delete favorite recipe
 @favorite_recipe_api.route('/favorite_recipe', methods=['DELETE'])
-@token_required
+#@token_required
 def delete_favorite_recipe(current_user, favorite_recipe_id):
     favorite_recipe = FavoriteRecipe.query.get_or_404(favorite_recipe_id)
     if favorite_recipe.user_id is not current_user.id:

@@ -9,7 +9,7 @@ recipe_ingredient_api = Blueprint('recipe_ingredient_api', __name__)
 
 # New ingredient in recipe
 @recipe_ingredient_api.route('/recipe_ingredient', methods=['POST'])
-@token_required
+#@token_required
 def add_recipe_ingredient(current_user):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
@@ -25,7 +25,7 @@ def add_recipe_ingredient(current_user):
 
 # Show all ingredient in recipe
 @recipe_ingredient_api.route('/recipe_ingredient', methods=['GET'])
-@token_required
+#@token_required
 def get_all_recipes_ingredient(current_user):
     all_recipe_ingredients = RecipeIngredient.query.all()
     result = recipe_ingredients_schema.dump(all_recipe_ingredients)
@@ -33,14 +33,14 @@ def get_all_recipes_ingredient(current_user):
 
 # Show ingredient in recipe by id
 @recipe_ingredient_api.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['GET'])
-@token_required
+#@token_required
 def get_recipe_ingredient(current_user, recipe_ingredient_id):
     recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
     return recipe_ingredient_schema.jsonify(recipe_ingredient)
 
 # Update ingredient in recipe by id
 @recipe_ingredient_api.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['PUT'])
-@token_required
+#@token_required
 def update_recipe_ingredient(current_user, recipe_ingredient_id):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
@@ -53,7 +53,7 @@ def update_recipe_ingredient(current_user, recipe_ingredient_id):
 
 # Delete ingredien in recipe by id
 @recipe_ingredient_api.route('/recipe_ingredient/<recipe_ingredient_id>', methods=['DELETE'])
-@token_required
+#@token_required
 def delete_recipe_ingredient(current_user, recipe_ingredient_id):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})

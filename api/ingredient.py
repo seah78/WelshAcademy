@@ -8,7 +8,7 @@ ingredient_api = Blueprint('ingredient_api', __name__)
 
 # New ingredient
 @ingredient_api.route('/ingredient', methods=['POST'])
-@token_required
+#@token_required
 def add_ingredient(current_user):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
@@ -23,7 +23,7 @@ def add_ingredient(current_user):
 
 # Show all indregients
 @ingredient_api.route('/ingredient', methods=['GET'])
-@token_required
+#@token_required
 def get_all_ingredients(current_user):
     all_ingredients = Ingredient.query.all()
     
@@ -33,14 +33,14 @@ def get_all_ingredients(current_user):
 
 # Show ingredient by id
 @ingredient_api.route('/ingredient/<ingredient_id>', methods=['GET'])
-@token_required
+#@token_required
 def get_ingredient(current_user, ingredient_id):
     ingredient = Ingredient.query.get_or_404(ingredient_id)
     return ingredient_schema.jsonify(ingredient)
 
 # Update ingredient by id
 @ingredient_api.route('/ingredient/<ingredient_id>', methods=['PUT'])
-@token_required
+#@token_required
 def update_ingredient(current_user, ingredient_id):
     if not current_user.is_admin:
         return jsonify({'message' : 'Cannot perform that function!'})
