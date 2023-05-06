@@ -32,8 +32,10 @@ class TestUser(BaseTestCase):
         
     def test_update_admin_user(self):
         # create a super user
-        password='SuperPassword'
-        superadmin = User(public_id='superadmin', username='SuperAdmin', password=generate_password_hash(password), is_admin=True)
+        superadmin = User(public_id='superadmin', 
+                          username='SuperAdmin', 
+                          password=generate_password_hash('SuperPassword'), 
+                          is_admin=True)
         db.session.add(superadmin)
         db.session.commit()
         response = self.client.get('/login', headers={
@@ -59,12 +61,53 @@ class TestUser(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue('token' in data)
+        
+    def test_show_all_users(self):
+        superadmin = User(public_id='superadmin', 
+                        username='SuperAdmin', 
+                        password=generate_password_hash('SuperPassword'), 
+                        is_admin=True)
+        user = User(public_id="test", 
+                    username='test_user', 
+                    password=generate_password_hash('test_password'), 
+                    is_admin=False)
+        db.session.add(superadmin)
+        db.session.add(user)
+        db.session.commit()
+
+        # Login as superadmin and get token
+        response = self.client.get('/login', headers={
+            'Authorization': 'Basic ' + b64encode(b'SuperAdmin:SuperPassword').decode('utf-8')
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue('token' in data)
+        token = data['token']
+
+        # Get all users with the token
+        response = self.client.get('/user', headers={
+            'x-access-token': token
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+
+        # Check if the returned data matches the expected data
+        self.assertEqual(len(data['users']), 2)
+        self.assertEqual(data['users'][0]['public_id'], superadmin.public_id)
+        self.assertEqual(data['users'][0]['username'], superadmin.username)
+        self.assertEqual(data['users'][0]['is_admin'], superadmin.is_admin)
+        self.assertEqual(data['users'][1]['public_id'], user.public_id)
+        self.assertEqual(data['users'][1]['username'], user.username)
+        self.assertEqual(data['users'][1]['is_admin'], user.is_admin)
+
 
 
     def test_login_success(self):
         # create a test user
-        password = 'test_password'
-        user = User(public_id="test", username='test_user', password=generate_password_hash(password), is_admin=False)
+        user = User(public_id="test", 
+                    username='test_user', 
+                    password=generate_password_hash('test_password'), 
+                    is_admin=False)
         db.session.add(user)
         db.session.commit()
 
