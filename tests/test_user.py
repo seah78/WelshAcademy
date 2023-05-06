@@ -154,6 +154,40 @@ class TestUser(BaseTestCase):
         self.assertEqual(response.status_code, 409)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['message'], 'User already exists')
+        
+    def test_update_user(self):
+        superadmin = User(public_id='superadmin', 
+                        username='SuperAdmin', 
+                        password=generate_password_hash('SuperPassword'), 
+                        is_admin=True)
+        user = User(public_id="test", 
+                    username='test_user', 
+                    password=generate_password_hash('test_password'), 
+                    is_admin=False)
+        db.session.add(superadmin)
+        db.session.add(user)
+        db.session.commit()
+
+        # Login as superadmin and get token
+        response = self.client.get('/login', headers={
+            'Authorization': 'Basic ' + b64encode(b'SuperAdmin:SuperPassword').decode('utf-8')
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue('token' in data)
+        token = data['token']
+        
+        # Update user as superadmin
+        response = self.client.put(f'/user/{user.public_id}', headers={
+            'x-access-token': token
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'The user has been updated!')
+
+        # Check if user is now an admin
+        updated_user = User.query.filter_by(public_id=user.public_id).first()
+        self.assertTrue(updated_user.is_admin)        
 
 
     def test_delete_one_user(self):
