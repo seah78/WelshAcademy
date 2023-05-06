@@ -100,6 +100,69 @@ class TestUser(BaseTestCase):
         self.assertEqual(data['users'][1]['username'], user.username)
         self.assertEqual(data['users'][1]['is_admin'], user.is_admin)
 
+    def test_show_one_user(self):
+        superadmin = User(public_id='superadmin', 
+                        username='SuperAdmin', 
+                        password=generate_password_hash('SuperPassword'), 
+                        is_admin=True)
+        user = User(public_id="test", 
+                    username='test_user', 
+                    password=generate_password_hash('test_password'), 
+                    is_admin=False)
+        db.session.add(superadmin)
+        db.session.add(user)
+        db.session.commit()
+
+        # Login as superadmin and get token
+        response = self.client.get('/login', headers={
+            'Authorization': 'Basic ' + b64encode(b'SuperAdmin:SuperPassword').decode('utf-8')
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue('token' in data)
+        token = data['token']
+        
+        # Get the user using its public_id
+        response = self.client.get(f'/user/{user.public_id}', headers={
+            'x-access-token': token
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['user']['public_id'], user.public_id)
+        self.assertEqual(data['user']['username'], user.username)
+        self.assertEqual(data['user']['password'], user.password)
+        self.assertEqual(data['user']['is_admin'], user.is_admin)
+
+    def test_delete_one_user(self):
+        superadmin = User(public_id='superadmin', 
+                        username='SuperAdmin', 
+                        password=generate_password_hash('SuperPassword'), 
+                        is_admin=True)
+        user = User(public_id="test", 
+                    username='test_user', 
+                    password=generate_password_hash('test_password'), 
+                    is_admin=False)
+        db.session.add(superadmin)
+        db.session.add(user)
+        db.session.commit()
+
+        # Login as superadmin and get token
+        response = self.client.get('/login', headers={
+            'Authorization': 'Basic ' + b64encode(b'SuperAdmin:SuperPassword').decode('utf-8')
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue('token' in data)
+        token = data['token']
+            
+        # Delete the user using its public_id
+        response = self.client.delete(f'/user/{user.public_id}', headers={
+            'x-access-token': token
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'The user has been deleted!')
+        
 
 
     def test_login_success(self):
