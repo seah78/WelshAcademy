@@ -133,6 +133,29 @@ class TestUser(BaseTestCase):
         self.assertEqual(data['user']['password'], user.password)
         self.assertEqual(data['user']['is_admin'], user.is_admin)
 
+    def test_signup(self):
+        # create a new user
+        data = {
+            'username': 'test_user_signup',
+            'password': 'test_password'
+        }
+        response = self.client.post('/signup', json=data)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'New user created')
+        
+        
+        # try to create the same user again
+        data = {
+            'username': 'test_user_signup',
+            'password': 'test_password'
+        }
+        response = self.client.post('/signup', json=data)
+        self.assertEqual(response.status_code, 409)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'User already exists')
+
+
     def test_delete_one_user(self):
         superadmin = User(public_id='superadmin', 
                         username='SuperAdmin', 
