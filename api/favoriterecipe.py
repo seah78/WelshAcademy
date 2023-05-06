@@ -36,7 +36,7 @@ def get_favorite_recipe(current_user):
 
 
 # Delete favorite recipe
-@favorite_recipe_api.route('/favorite_recipe', methods=['DELETE'])
+@favorite_recipe_api.route('/favorite_recipe/<favorite_recipe_id>', methods=['DELETE'])
 @token_required
 def delete_favorite_recipe(current_user, favorite_recipe_id):
     favorite_recipe = FavoriteRecipe.query.get_or_404(favorite_recipe_id)
@@ -44,5 +44,6 @@ def delete_favorite_recipe(current_user, favorite_recipe_id):
         return jsonify({'message' : 'Cannot perform that function!'})
     db.session.delete(favorite_recipe)
     db.session.commit()
-    return '', 204
+    return jsonify({'message' : 'Favorite deleted!'}), 200
+
 

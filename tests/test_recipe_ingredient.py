@@ -19,7 +19,7 @@ from utils.extensions import db
 
 class TestRecipeIngredient(BaseTestCase):
 
-    def test_add_recipe(self):
+    def test_add_recipe_ingredient(self):
         superadmin = User(public_id='superadmin', 
                         username='SuperAdmin', 
                         password=generate_password_hash('SuperPassword'), 
@@ -71,7 +71,7 @@ class TestRecipeIngredient(BaseTestCase):
 
 
 
-    def test_show_all_recipes(self):
+    def test_show_all_recipes_ingredient(self):
         superadmin = User(public_id='superadmin', 
                         username='SuperAdmin', 
                         password=generate_password_hash('SuperPassword'), 
@@ -129,7 +129,7 @@ class TestRecipeIngredient(BaseTestCase):
         self.assertTrue(len(data) > 0)
  
                     
-    def test_show_one_recipe(self):
+    def test_show_one_recipe_ingredient(self):
         superadmin = User(public_id='superadmin', 
                         username='SuperAdmin', 
                         password=generate_password_hash('SuperPassword'), 
