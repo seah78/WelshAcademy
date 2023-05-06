@@ -12,3 +12,10 @@ class User(db.Model):
     def init_app(cls, app):
         with app.app_context():
             db.create_all()
+            
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'public_id', 'username', 'password', 'is_admin')
+
+recipe_schema = UserSchema()
+recipes_schema = UserSchema(many=True)

@@ -29,6 +29,37 @@ class TestUser(BaseTestCase):
         # assert that the SuperAdmin user was created in the database
         superadmin = User.query.filter_by(username='SuperAdmin').first()
         self.assertIsNotNone(superadmin)
+        
+    def test_update_admin_user(self):
+        # create a super user
+        password='SuperPassword'
+        superadmin = User(public_id='superadmin', username='SuperAdmin', password=generate_password_hash(password), is_admin=True)
+        db.session.add(superadmin)
+        db.session.commit()
+        response = self.client.get('/login', headers={
+            'Authorization': 'Basic ' + b64encode(b'SuperAdmin:SuperPassword').decode('utf-8')
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue('token' in data)
+        token = data['token']
+        # update the SuperAdmin user password
+        new_password = 'NewSuperPassword'
+        response = self.client.put('/admin', json={'new_password': new_password}, headers={
+            'x-access-token': token
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'SuperAdmin password updated')
+
+        # log in with the new password and check if it works
+        response = self.client.get('/login', headers={
+            'Authorization': 'Basic ' + b64encode(b'SuperAdmin:' + new_password.encode()).decode('utf-8')
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue('token' in data)
+
 
     def test_login_success(self):
         # create a test user
@@ -62,3 +93,5 @@ class TestUser(BaseTestCase):
 
         # assert that the response contains a valid WWW-Authenticate header
         self.assertTrue('WWW-Authenticate' in response.headers)
+
+
